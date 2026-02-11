@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+
+    <link rel="stylesheet" th:href="@{/css/output.css}">
+
+    <title>Accès Interdit</title>
+</head>
+<body
+        class="flex items-center justify-center h-screen bg-gradient-to-br from-gray-100 to-gray-300"
+>
+<div class="text-center p-8 bg-white rounded-xl shadow-lg animate-fadeIn">
+    <div
+            class="flex flex-row gap-4 items-center justify-center animate-fadeIn"
+    >
+        <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="70"
+                height="70"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide text-red-500 lucide-shield-x-icon lucide-shield-x"
+        >
+            <path
+                    d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+            />
+            <path d="m14.5 9.5-5 5" />
+            <path d="m9.5 9.5 5 5" />
+        </svg>
+        <h1 class="text-4xl font-extrabold text-red-600 drop-shadow-lg">
+            Accès refusé
+        </h1>
+    </div>
+    <div
+            class="flex flex-row gap-4 items-center justify-center animate-fadeIn"
+    >
+        <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="35"
+                height="35"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="text-red-500 lucide lucide-circle-x-icon lucide-circle-x"
+        >
+            <circle cx="12" cy="12" r="10" />
+            <path d="m15 9-6 6" />
+            <path d="m9 9 6 6" />
+        </svg>
+        <p class="mt-6 text-lg text-gray-700">
+            Désolé, vous n'êtes pas autorisé à effectuer cette action.
+        </p>
+    </div>
+    <a
+            href="/"
+            class="mt-8 inline-block px-8 py-3 text-base font-semibold text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700 transform hover:scale-105 transition duration-300"
+    >
+        Retour à l'accueil
+    </a>
+</div>
+
+<style>
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.8s ease-out;
+    }
+</style>
+</body>
+</html>
