@@ -1,86 +1,108 @@
-<!doctype html>
-<html lang="fr">
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
 <head>
     <meta charset="UTF-8" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Accès Refusé - DoctorApp</title>
     <link rel="stylesheet" th:href="@{/css/output.css}">
+    <script src="https://cdn.tailwindcss.com"></script> <!-- temporaire - à retirer si tu utilises déjà tailwind compilé -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <title>Accès Interdit</title>
+    <style>
+        body {
+          font-family: 'Inter', system-ui, sans-serif;
+          background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        }
+        .shield-x {
+          animation: shake 2.5s infinite ease-in-out;
+        }
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          20%, 60% { transform: translateX(-8px); }
+          40%, 80% { transform: translateX(8px); }
+        }
+        .fade-in-up {
+          animation: fadeInUp 0.8s ease-out forwards;
+        }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .pulse-glow {
+          animation: pulseGlow 3s infinite ease-in-out;
+        }
+        @keyframes pulseGlow {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+          50%      { box-shadow: 0 0 30px 15px rgba(239, 68, 68, 0); }
+        }
+    </style>
 </head>
-<body
-        class="flex items-center justify-center h-screen bg-gradient-to-br from-gray-100 to-gray-300"
->
-<div class="text-center p-8 bg-white rounded-xl shadow-lg animate-fadeIn">
-    <div
-            class="flex flex-row gap-4 items-center justify-center animate-fadeIn"
-    >
-        <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="70"
-                height="70"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide text-red-500 lucide-shield-x-icon lucide-shield-x"
-        >
-            <path
-                    d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
-            />
-            <path d="m14.5 9.5-5 5" />
-            <path d="m9.5 9.5 5 5" />
-        </svg>
-        <h1 class="text-4xl font-extrabold text-red-600 drop-shadow-lg">
-            Accès refusé
-        </h1>
+<body class="min-h-screen flex items-center justify-center p-6">
+
+<div class="max-w-lg w-full bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/60 overflow-hidden transition-all duration-500 hover:shadow-3xl">
+
+    <!-- En-tête visuel -->
+    <div class="bg-gradient-to-r from-red-600 to-rose-600 p-10 text-center relative">
+        <div class="absolute inset-0 bg-black/10"></div>
+
+        <div class="relative z-10">
+            <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-24 h-24 mx-auto text-white shield-x pulse-glow"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+            >
+                <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+                <path d="m14.5 9.5-5 5" />
+                <path d="m9.5 9.5 5 5" />
+            </svg>
+
+            <h1 class="mt-6 text-4xl md:text-5xl font-extrabold text-white tracking-tight drop-shadow-lg">
+                Accès refusé
+            </h1>
+        </div>
     </div>
-    <div
-            class="flex flex-row gap-4 items-center justify-center animate-fadeIn"
-    >
-        <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="35"
-                height="35"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="text-red-500 lucide lucide-circle-x-icon lucide-circle-x"
-        >
-            <circle cx="12" cy="12" r="10" />
-            <path d="m15 9-6 6" />
-            <path d="m9 9 6 6" />
-        </svg>
-        <p class="mt-6 text-lg text-gray-700">
-            Désolé, vous n'êtes pas autorisé à effectuer cette action.
+
+    <!-- Contenu principal -->
+    <div class="p-8 md:p-10 text-center space-y-6 fade-in-up" style="animation-delay: 0.3s;">
+        <p class="text-xl text-gray-700 leading-relaxed">
+            Désolé, vous n'avez pas les autorisations nécessaires<br>pour accéder à cette page ou effectuer cette action.
+        </p>
+
+        <div class="inline-flex items-center gap-3 px-6 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-medium">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 8v4"/>
+                <path d="M12 16h.01"/>
+            </svg>
+            <span>Code : 403 - Forbidden</span>
+        </div>
+
+        <p class="text-gray-500 text-sm">
+            Si vous pensez qu'il s'agit d'une erreur, contactez un administrateur ou essayez de vous reconnecter.
         </p>
     </div>
-    <a
-            href="/"
-            class="mt-8 inline-block px-8 py-3 text-base font-semibold text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700 transform hover:scale-105 transition duration-300"
-    >
-        Retour à l'accueil
-    </a>
+
+    <!-- Boutons d’action -->
+    <div class="px-8 pb-10 flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/"
+           class="inline-flex items-center justify-center px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-300 transform hover:scale-[1.03] active:scale-95">
+            ← Retour à l'accueil
+        </a>
+
+        <a href="/login"
+           class="inline-flex items-center justify-center px-8 py-4 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold rounded-xl border border-gray-300 transition-all duration-300">
+            Se reconnecter
+        </a>
+    </div>
+
 </div>
 
-<style>
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    .animate-fadeIn {
-      animation: fadeIn 0.8s ease-out;
-    }
-</style>
 </body>
 </html>

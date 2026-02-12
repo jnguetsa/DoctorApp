@@ -13,6 +13,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 
+/**
+ * Service personnalisé qui implémente UserDetailsService
+ *
+ * Rôle principal : permettre à Spring Security de charger les informations d'un utilisateur
+ * à partir de son email (et non username classique) lors de l'authentification.
+ *
+ * C'est cette classe qui est appelée quand on fait :
+ *   authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password))
+ *   ou quand le JwtAuthenticationFilter charge l'utilisateur à partir du token
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -20,36 +30,68 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final UtilisateursRepository utilisateursRepository;
 
+
+    /**
+     * Méthode principale exigée par l'interface UserDetailsService
+     *
+     * Spring Security appelle cette méthode quand il a besoin de :
+     * - Vérifier les identifiants lors du login
+     * - Charger les rôles/autorités d'un utilisateur déjà identifié via JWT
+     *
+     * @param email l'identifiant utilisé pour se connecter (dans ton cas : l'email)
+     * @return UserDetails contenant : username, password, enabled, expired, locked, authorities
+     * @throws UsernameNotFoundException si l'utilisateur n'existe pas
+     */
     @Override
-    @Transactional(readOnly = true)  // ✅ AJOUT CRITIQUE
+    @Transactional(readOnly = true)   // Lecture seule + ouvre une transaction (utile si relations lazy)
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        log.info("🔍 Tentative de chargement de l'utilisateur avec l'email : {}", email);
 
+        log.info("🔍 Tentative de chargement de l'utilisateur : {}", email);
+
+        // Recherche de l'utilisateur par email
         Utilisateur utilisateur = utilisateursRepository.findByEmail(email)
-                .orElseThrow(() -> {
-                    log.error("❌ Utilisateur non trouvé : {}", email);
-                    return new UsernameNotFoundException("Utilisateur non trouvé : " + email);
-                });
+                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé : " + email));
 
-        log.info("✅ Utilisateur trouvé !");
-        log.info("   📧 Email: {}", utilisateur.getEmail());
-        log.info("   👤 Nom: {}", utilisateur.getNom());
-        log.info("   ✔️ Enabled: {}", utilisateur.isEnabled());
-        log.info("   🔒 Account Locked: {}", utilisateur.isAccountLocked());
+        // ────────────────────────────────────────────────────────────────
+        // Construction des authorities (rôles + permissions)
+        // ────────────────────────────────────────────────────────────────
+        var authorities = utilisateur.getRoles().stream()
 
-        // Force le chargement des rôles et permissions
-        utilisateur.getRoles().size();
-        utilisateur.getRoles().forEach(role -> {
-            log.info("   🎭 Role: {}", role.getNom());
-            role.getPermissions().size(); // Force le chargement des permissions
-        });
+                // Pour chaque rôle de l'utilisateur
+                .flatMap(role -> {
 
-        log.info("   🔑 Authorities: {}", utilisateur.getAuthorities());
+                    // 1. On crée toujours l'autorité ROLE_XXX (convention Spring Security)
+                    //    Exemple : ROLE_ADMIN, ROLE_MEDECIN, ROLE_PATIENT
+                    var roleAuthority = new SimpleGrantedAuthority("ROLE_" + role.getNom());
 
+                    // 2. On ajoute toutes les permissions associées au rôle (si tu en utilises)
+                    //    Exemple : "CREATE_PATIENT", "VIEW_DOSSIER_MEDICAL", etc.
+                    var permissionAuthorities = role.getPermissions().stream()
+                            .map(permission -> new SimpleGrantedAuthority(permission.getNom()));
+
+                    // On combine le rôle + ses permissions dans un seul flux
+                    return java.util.stream.Stream.concat(
+                            java.util.stream.Stream.of(roleAuthority),
+                            permissionAuthorities
+                    );
+                })
+                // On collecte tout ça dans une liste immuable
+                .toList();
+
+        log.info("🔑 Authorities générées : {}", authorities);
+
+        // ────────────────────────────────────────────────────────────────
+        // Création de l'objet UserDetails attendu par Spring Security
+        // ────────────────────────────────────────────────────────────────
         return new org.springframework.security.core.userdetails.User(
-                utilisateur
-                        .getEmail(), utilisateur.getPassword(), Collections
-                        .singleton(new SimpleGrantedAuthority(utilisateur.getRoles().toString())));
+                utilisateur.getEmail(),                     // username (ici = email)
+                utilisateur.getPassword(),                  // mot de passe hashé
+                utilisateur.isEnabled(),                    // compte activé ?
+                true,                               // accountNonExpired (on ne gère pas pour l'instant)
+                true,                               // credentialsNonExpired (on ne gère pas pour l'instant)
+                !utilisateur.isAccountLocked(),             // compte non verrouillé
+                authorities                                 // liste des rôles + permissions
+        );
     }
 }
 

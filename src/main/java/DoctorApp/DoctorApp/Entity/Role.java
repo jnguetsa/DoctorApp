@@ -25,8 +25,14 @@ public class Role {
     private String description;
     private boolean active = true;
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles" )
     private Set<Utilisateur> utilisateurs = new HashSet<>();
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany
+    @JoinTable(
+            name = "roles_permissions",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id")
+    )
+
     private Set<Permission> permissions = new HashSet<>();
 }

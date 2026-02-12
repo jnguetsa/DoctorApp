@@ -1,6 +1,242 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="fr"-->
+<!--      xmlns:th="http://www.thymeleaf.org"-->
+<!--      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Liste des patients</title>-->
+<!--    <script src="../static/app.js"></script>-->
+<!--    <link rel="stylesheet" th:href="@{/css/output.css}">-->
+<!--</head>-->
+<!--<body class="bg-base-200 min-h-screen">-->
+
+<!--<div class="container mx-auto p-6">-->
+
+<!--    &lt;!&ndash; Debug rapide (à retirer plus tard si tu veux) &ndash;&gt;-->
+<!--    <div sec:authorize="isAuthenticated()" class="mb-4 p-3 bg-base-300 rounded-lg">-->
+<!--        <p>Connecté en tant que : <strong sec:authentication="name"></strong></p>-->
+<!--        <p>Rôles & permissions : <strong sec:authentication="principal.authorities"></strong></p>-->
+<!--    </div>-->
+
+<!--    <div class="flex justify-between items-center mb-6">-->
+<!--        <h1 class="text-3xl font-bold text-primary">Liste des patients</h1>-->
+
+<!--        &lt;!&ndash; Bouton Ajouter → visible si patient:write OU ROLE_ADMIN &ndash;&gt;-->
+<!--        <button sec:authorize="hasAuthority('patient:write') or hasRole('ADMIN')"-->
+<!--                class="p-2 rounded-full text-white cursor-pointer bg-green-900 hover:bg-green-800 transition-colors"-->
+<!--                onclick="document.getElementById('modal-add-patient').showModal()">-->
+<!--            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">-->
+<!--                <circle cx="12" cy="12" r="10"/>-->
+<!--                <path d="M8 12h8"/>-->
+<!--                <path d="M12 8v8"/>-->
+<!--            </svg>-->
+<!--        </button>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Message si liste vide &ndash;&gt;-->
+<!--    <div th:if="${#lists.isEmpty(listepatient)}" class="flex flex-col items-center justify-center min-h-[50vh] text-center">-->
+<!--        <span class="text-6xl mb-4">😞</span>-->
+<!--        <p class="text-xl font-medium text-base-content/80">Aucun patient trouvé.</p>-->
+<!--        <p class="text-sm mt-2 text-base-content/60">Ajoutez votre premier patient avec le bouton + ci-dessus !</p>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Liste des patients &ndash;&gt;-->
+<!--    <div th:unless="${#lists.isEmpty(listepatient)}" class="card bg-base-100 shadow-xl">-->
+<!--        <div class="card-body p-4">-->
+
+<!--            &lt;!&ndash; Barre de recherche &ndash;&gt;-->
+<!--            <div>-->
+<!--                <form th:action="@{/index}" method="get" class="flex flex-row justify-items-start gap-2">-->
+<!--                    <button class="btn btn-success font-bold text-green-100">Recherche</button>-->
+<!--                    <label class="input">-->
+<!--                        <svg class="h-5 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">-->
+<!--                            <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor">-->
+<!--                                <circle cx="11" cy="11" r="8"></circle>-->
+<!--                                <path d="m21 21-4.3-4.3"></path>-->
+<!--                            </g>-->
+<!--                        </svg>-->
+<!--                        <input name="keyword" type="search" th:value="${keyword}" placeholder="Rechercher un patient..."/>-->
+<!--                    </label>-->
+<!--                </form>-->
+<!--            </div>-->
+
+<!--            <div class="overflow-x-auto h-96 mt-4">-->
+<!--                <table class="table table-zebra table-pin-cols">-->
+<!--                    <thead>-->
+<!--                    <tr>-->
+<!--                        <th>Nom</th>-->
+<!--                        <th>Prénom</th>-->
+<!--                        <th>Date de naissance</th>-->
+<!--                        <th>Score</th>-->
+<!--                        <th>Statut</th>-->
+<!--                        &lt;!&ndash; Colonne Actions → visible si write OU delete OU ROLE_ADMIN &ndash;&gt;-->
+<!--                        <th sec:authorize="hasAnyAuthority('patient:write','patient:delete') or hasRole('ADMIN')"-->
+<!--                            class="text-center">-->
+<!--                            Actions-->
+<!--                        </th>-->
+<!--                    </tr>-->
+<!--                    </thead>-->
+<!--                    <tbody>-->
+<!--                    <tr th:each="patient : ${listepatient}">-->
+<!--                        <td th:text="${patient.nom}"></td>-->
+<!--                        <td th:text="${patient.prenom}"></td>-->
+<!--                        <td th:text="${patient.dateNaissance}"></td>-->
+<!--                        <td th:text="${patient.score}"></td>-->
+<!--                        <td>-->
+<!--                            <div th:classappend="${patient.malade ? 'badge badge-error px-3 text-green-100 font-bold' : 'badge badge-success px-6 text-green-100 font-bold'}">-->
+<!--                                <span th:text="${patient.malade ? 'Malade' : 'Sain'}"></span>-->
+<!--                            </div>-->
+<!--                        </td>-->
+
+<!--                        &lt;!&ndash; Cellule Actions → visible si write OU delete OU ROLE_ADMIN &ndash;&gt;-->
+<!--                        <td sec:authorize="hasAnyAuthority('patient:write','patient:delete') or hasRole('ADMIN')"-->
+<!--                            class="text-center">-->
+<!--                            <div class="flex items-center justify-center gap-3">-->
+
+<!--                                &lt;!&ndash; Bouton Modifier → visible si write OU ROLE_ADMIN &ndash;&gt;-->
+<!--                                <button sec:authorize="hasAuthority('patient:write') or hasRole('ADMIN')"-->
+<!--                                        onclick="document.getElementById('modifierPatient').showModal()"-->
+<!--                                        class="rounded-lg p-2 cursor-pointer hover:bg-base-200">-->
+<!--                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">-->
+<!--                                        <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>-->
+<!--                                        <path d="m15 5 4 4"/>-->
+<!--                                    </svg>-->
+<!--                                </button>-->
+
+<!--                                &lt;!&ndash; Bouton Supprimer → visible si delete OU ROLE_ADMIN &ndash;&gt;-->
+<!--                                <button sec:authorize="hasAuthority('patient:delete') or hasRole('ADMIN')"-->
+<!--                                        th:onclick="'document.getElementById(\'deleteModal-' + ${patient.id} + '\').showModal()'"-->
+<!--                                        class="p-2 rounded-full cursor-pointer text-white bg-red-900 hover:bg-red-800">-->
+<!--                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">-->
+<!--                                        <path d="M3 6h18"/>-->
+<!--                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>-->
+<!--                                        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>-->
+<!--                                        <path d="M10 11v6"/>-->
+<!--                                        <path d="M14 11v6"/>-->
+<!--                                    </svg>-->
+<!--                                </button>-->
+<!--                            </div>-->
+<!--                        </td>-->
+
+<!--                        &lt;!&ndash; Modal de confirmation suppression → visible si delete OU ROLE_ADMIN &ndash;&gt;-->
+<!--                        <dialog sec:authorize="hasAuthority('patient:delete') or hasRole('ADMIN')"-->
+<!--                                th:id="'deleteModal-' + ${patient.id}"-->
+<!--                                class="modal">-->
+<!--                            <div class="modal-box text-left">-->
+<!--                                <form method="dialog">-->
+<!--                                    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">-->
+<!--                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">-->
+<!--                                            <path d="M18 6 6 18"/>-->
+<!--                                            <path d="m6 6 12 12"/>-->
+<!--                                        </svg>-->
+<!--                                    </button>-->
+<!--                                </form>-->
+<!--                                <h3 class="font-bold text-lg text-error">Confirmer la suppression</h3>-->
+<!--                                <p class="py-4">-->
+<!--                                    Voulez-vous vraiment supprimer le patient-->
+<!--                                    <span class="font-bold" th:text="${patient.nom + ' ' + patient.prenom}"></span> ?-->
+<!--                                </p>-->
+<!--                                <div class="modal-action flex gap-3 mt-6">-->
+<!--                                    <form method="dialog">-->
+<!--                                        <button class="btn">Annuler</button>-->
+<!--                                    </form>-->
+<!--                                    <a th:href="@{/admin/deletePatient(id=${patient.id})}"-->
+<!--                                       class="btn btn-error text-white">Supprimer</a>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <form method="dialog" class="modal-backdrop">-->
+<!--                                <button>Fermer</button>-->
+<!--                            </form>-->
+<!--                        </dialog>-->
+<!--                    </tr>-->
+<!--                    </tbody>-->
+<!--                </table>-->
+<!--            </div>-->
+
+<!--            &lt;!&ndash; Pagination / Nombre de lignes par page &ndash;&gt;-->
+<!--            <div class="flex items-center gap-2 p-2">-->
+<!--                <span class="text-sm font-bold bg-green-600 p-1 px-4 text-white rounded-xl">Lignes par page</span>-->
+<!--                <div class="flex items-center gap-2">-->
+<!--                    <select class="select select-bordered select-sm w-20 cursor-pointer"-->
+<!--                            onchange="window.location.href='/index?size=' + this.value">-->
+<!--                        <option th:selected="${size == 5}" value="5">5</option>-->
+<!--                        <option th:selected="${size == 10}" value="10">10</option>-->
+<!--                        <option th:selected="${size == 20}" value="20">20</option>-->
+<!--                        <option th:selected="${size == 60}" value="60">60</option>-->
+<!--                        <option th:selected="${size == 100}" value="100">100</option>-->
+<!--                        <option th:selected="${size == 150}" value="150">150</option>-->
+<!--                        <option th:selected="${size == 200}" value="200">200</option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; MODAL AJOUT PATIENT → visible si patient:write OU ROLE_ADMIN &ndash;&gt;-->
+<!--    <dialog sec:authorize="hasAuthority('patient:write') or hasRole('ADMIN')"-->
+<!--            id="modal-add-patient"-->
+<!--            class="modal modal-middle">-->
+<!--        <div class="modal-box max-w-2xl">-->
+<!--            <form method="dialog">-->
+<!--                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>-->
+<!--            </form>-->
+<!--            <h3 class="font-bold text-lg mb-4">Nouveau patient</h3>-->
+
+<!--            <form th:action="@{/admin/addPatient}" th:object="${patient}" method="post" class="space-y-4">-->
+<!--                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">-->
+<!--                    <div>-->
+<!--                        <label class="label" for="nom"><span class="label-text">Nom</span></label>-->
+<!--                        <input th:field="*{nom}" type="text" id="nom" class="input input-bordered w-full" required/>-->
+<!--                        <span class="text-error text-xs" th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}"></span>-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        <label class="label" for="prenom"><span class="label-text">Prénom</span></label>-->
+<!--                        <input type="text" class="input input-bordered w-full" id="prenom" th:field="*{prenom}" required/>-->
+<!--                        <span class="text-error text-xs" th:if="${#fields.hasErrors('prenom')}" th:errors="*{prenom}"></span>-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        <label class="label" for="dateNaissance"><span class="label-text">Date de naissance</span></label>-->
+<!--                        <input type="date" id="dateNaissance" class="input input-bordered w-full" th:field="*{dateNaissance}" required/>-->
+<!--                        <span class="text-error text-xs" th:if="${#fields.hasErrors('dateNaissance')}" th:errors="*{dateNaissance}"></span>-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        <label class="label" for="score"><span class="label-text">Score</span></label>-->
+<!--                        <input type="number" min="0" id="score" max="100" class="input input-bordered w-full" th:field="*{score}"/>-->
+<!--                    </div>-->
+<!--                    <div class="flex flex-col gap-1">-->
+<!--                        <fieldset class="fieldset bg-base-100 border-base-300 rounded-box border p-4">-->
+<!--                            <legend class="fieldset-legend">Statut du Patient</legend>-->
+<!--                            <label class="label cursor-pointer justify-start gap-3">-->
+<!--                                <input type="checkbox" class="toggle toggle-primary" th:field="*{malade}"/>-->
+<!--                                <span class="label-text">Est malade ?</span>-->
+<!--                            </label>-->
+<!--                        </fieldset>-->
+<!--                        <span class="text-error text-xs" th:if="${#fields.hasErrors('malade')}" th:errors="*{malade}"></span>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="modal-action mt-6">-->
+<!--                    <button type="button" class="btn" onclick="document.getElementById('modal-add-patient').close()">-->
+<!--                        Annuler-->
+<!--                    </button>-->
+<!--                    <button type="submit" class="btn btn-primary">Enregistrer</button>-->
+<!--                </div>-->
+<!--            </form>-->
+<!--        </div>-->
+<!--    </dialog>-->
+
+<!--</div>-->
+<!--</body>-->
+<!--</html>-->
+
+
+
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org" data-theme='' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.thymeleaf.org ">
+<html lang="fr"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,13 +248,22 @@
 
 <div class="container mx-auto p-6">
 
+    <div class="container mx-auto p-6">
+
+        <!-- Debug rapide (à retirer plus tard si tu veux) -->
+        <div sec:authorize="isAuthenticated()" class="mb-4 p-3 bg-base-300 rounded-lg">
+            <p>Connecté en tant que : <strong sec:authentication="name"></strong></p>
+            <p>Rôles & permissions : <strong sec:authentication="principal.authorities"></strong></p>
+        </div>
+
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold text-primary">Liste des patients</h1>
 
-        <button class="p-2 rounded-full text-white cursor-pointer bg-green-900 hover:bg-green-800 transition-colors"
+        <!-- Bouton Ajouter patient → visible seulement si permission 'patient:write' -->
+        <button sec:authorize="hasAuthority('patient:write')"
+                class="p-2 rounded-full text-white cursor-pointer bg-green-900 hover:bg-green-800 transition-colors"
                 onclick="document.getElementById('modal-add-patient').showModal()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"/>
                 <path d="M8 12h8"/>
                 <path d="M12 8v8"/>
@@ -27,8 +272,7 @@
     </div>
 
     <!-- Message si liste vide -->
-    <div th:if="${#lists.isEmpty(listepatient)}"
-         class="flex flex-col items-center justify-center min-h-[50vh] text-center">
+    <div th:if="${#lists.isEmpty(listepatient)}" class="flex flex-col items-center justify-center min-h-[50vh] text-center">
         <span class="text-6xl mb-4">😞</span>
         <p class="text-xl font-medium text-base-content/80">Aucun patient trouvé.</p>
         <p class="text-sm mt-2 text-base-content/60">Ajoutez votre premier patient avec le bouton + ci-dessus !</p>
@@ -37,28 +281,25 @@
     <!-- Liste des patients -->
     <div th:unless="${#lists.isEmpty(listepatient)}" class="card bg-base-100 shadow-xl">
         <div class="card-body p-4">
+
             <!-- Barre de recherche -->
             <div>
                 <form th:action="@{/index}" method="get" class="flex flex-row justify-items-start gap-2">
                     <button class="btn btn-success font-bold text-green-100">Recherche</button>
                     <label class="input">
                         <svg class="h-5 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none"
-                               stroke="currentColor">
+                            <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor">
                                 <circle cx="11" cy="11" r="8"></circle>
                                 <path d="m21 21-4.3-4.3"></path>
                             </g>
                         </svg>
-                        <input name="keyword" type="search" th:value="${keyword}"
-                               placeholder="Rechercher un patient..."/>
+                        <input name="keyword" type="search" th:value="${keyword}" placeholder="Rechercher un patient..."/>
                     </label>
                 </form>
             </div>
 
             <div class="overflow-x-auto h-96 mt-4">
-                <!--                <table class="table table-zebra table-pin-rows table-pin-cols">-->
-                <table class="table table-zebra table-spin-cols">
-
+                <table class="table table-zebra table-pin-cols">
                     <thead>
                     <tr>
                         <th>Nom</th>
@@ -66,7 +307,10 @@
                         <th>Date de naissance</th>
                         <th>Score</th>
                         <th>Statut</th>
-                        <th class="text-center">Actions</th>
+                        <!-- Colonne Actions : visible seulement si write OU delete -->
+                        <th sec:authorize="hasAnyAuthority('patient:write', 'patient:delete')" class="text-center">
+                            Actions
+                        </th>
                     </tr>
                     </thead>
                     <tbody>
@@ -80,27 +324,26 @@
                                 <span th:text="${patient.malade ? 'Malade' : 'Sain'}"></span>
                             </div>
                         </td>
-                        <td class="text-center">
+
+                        <!-- Cellule Actions : visible seulement si l'utilisateur a write ou delete -->
+                        <td sec:authorize="hasAnyAuthority('patient:write', 'patient:delete')" class="text-center">
                             <div class="flex items-center justify-center gap-3">
-                                <!-- Bouton Modifier (à implémenter plus tard si besoin) -->
-                                <button onclick="document.getElementById('modifierPatient').showModal()"
+
+                                <!-- Bouton Modifier -->
+                                <button sec:authorize="hasAuthority('patient:write')"
+                                        onclick="document.getElementById('modifierPatient').showModal()"
                                         class="rounded-lg p-2 cursor-pointer hover:bg-base-200">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                                         fill="none"
-                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                         stroke-linejoin="round">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>
                                         <path d="m15 5 4 4"/>
                                     </svg>
                                 </button>
 
                                 <!-- Bouton Supprimer -->
-                                <button th:onclick="'document.getElementById(\'deleteModal-' + ${patient.id} + '\').showModal()'"
+                                <button sec:authorize="hasAuthority('patient:delete')"
+                                        th:onclick="'document.getElementById(\'deleteModal-' + ${patient.id} + '\').showModal()'"
                                         class="p-2 rounded-full cursor-pointer text-white bg-red-900 hover:bg-red-800">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                                         fill="none"
-                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                         stroke-linejoin="round">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M3 6h18"/>
                                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
                                         <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
@@ -109,39 +352,38 @@
                                     </svg>
                                 </button>
                             </div>
-
-                            <!-- Modal de confirmation suppression -->
-                            <dialog th:id="'deleteModal-' + ${patient.id}" class="modal">
-                                <div class="modal-box text-left">
-                                    <form method="dialog">
-                                        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M18 6 6 18"/>
-                                                <path d="m6 6 12 12"/>
-                                            </svg>
-                                        </button>
-                                    </form>
-                                    <h3 class="font-bold text-lg text-error">Confirmer la suppression</h3>
-                                    <p class="py-4">
-                                        Voulez-vous vraiment supprimer le patient
-                                        <span class="font-bold" th:text="${patient.nom + ' ' + patient.prenom}"></span>
-                                        ?
-                                    </p>
-                                    <div class="modal-action flex gap-3 mt-6">
-                                        <form method="dialog">
-                                            <button class="btn">Annuler</button>
-                                        </form>
-                                        <a th:href="@{/admin/deletePatient(id=${patient.id})}"
-                                           class="btn btn-error text-white">Supprimer</a>
-                                    </div>
-                                </div>
-                                <form method="dialog" class="modal-backdrop">
-                                    <button>Fermer</button>
-                                </form>
-                            </dialog>
                         </td>
+
+                        <!-- Modal de confirmation de suppression (généré seulement si permission delete) -->
+                        <dialog sec:authorize="hasAuthority('patient:delete')"
+                                th:id="'deleteModal-' + ${patient.id}"
+                                class="modal">
+                            <div class="modal-box text-left">
+                                <form method="dialog">
+                                    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M18 6 6 18"/>
+                                            <path d="m6 6 12 12"/>
+                                        </svg>
+                                    </button>
+                                </form>
+                                <h3 class="font-bold text-lg text-error">Confirmer la suppression</h3>
+                                <p class="py-4">
+                                    Voulez-vous vraiment supprimer le patient
+                                    <span class="font-bold" th:text="${patient.nom + ' ' + patient.prenom}"></span> ?
+                                </p>
+                                <div class="modal-action flex gap-3 mt-6">
+                                    <form method="dialog">
+                                        <button class="btn">Annuler</button>
+                                    </form>
+                                    <a th:href="@{/admin/deletePatient(id=${patient.id})}"
+                                       class="btn btn-error text-white">Supprimer</a>
+                                </div>
+                            </div>
+                            <form method="dialog" class="modal-backdrop">
+                                <button>Fermer</button>
+                            </form>
+                        </dialog>
                     </tr>
                     </tbody>
                 </table>
@@ -149,11 +391,8 @@
 
             <!-- Pagination / Nombre de lignes par page -->
             <div class="flex items-center gap-2 p-2">
-                <span class="text-sm font-bold bg-green-600 p-1 px-4 text-white rounded-xl">
-                    Lignes par page
-                </span>
+                <span class="text-sm font-bold bg-green-600 p-1 px-4 text-white rounded-xl">Lignes par page</span>
                 <div class="flex items-center gap-2">
-
                     <select class="select select-bordered select-sm w-20 cursor-pointer"
                             onchange="window.location.href='/index?size=' + this.value">
                         <option th:selected="${size == 5}" value="5">5</option>
@@ -163,55 +402,44 @@
                         <option th:selected="${size == 100}" value="100">100</option>
                         <option th:selected="${size == 150}" value="150">150</option>
                         <option th:selected="${size == 200}" value="200">200</option>
-
                     </select>
                 </div>
-
             </div>
+
         </div>
     </div>
 
-    <!-- MODAL AJOUT PATIENT (corrigé) -->
-    <dialog id="modal-add-patient" class="modal modal-middle">
+    <!-- MODAL AJOUT PATIENT → visible seulement si permission 'patient:write' -->
+    <dialog sec:authorize="hasAuthority('patient:write')"
+            id="modal-add-patient"
+            class="modal modal-middle">
         <div class="modal-box max-w-2xl">
             <form method="dialog">
                 <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
             </form>
-
             <h3 class="font-bold text-lg mb-4">Nouveau patient</h3>
 
             <form th:action="@{/admin/addPatient}" th:object="${patient}" method="post" class="space-y-4">
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="label" for="nom"><span class="label-text">Nom</span></label>
                         <input th:field="*{nom}" type="text" id="nom" class="input input-bordered w-full" required/>
                         <span class="text-error text-xs" th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}"></span>
                     </div>
-
                     <div>
                         <label class="label" for="prenom"><span class="label-text">Prénom</span></label>
-                        <input type="text" class="input input-bordered w-full" id="prenom" th:field="*{prenom}"
-                               required/>
-                        <span class="text-error text-xs" th:if="${#fields.hasErrors('prenom')}"
-                              th:errors="*{prenom}"></span>
+                        <input type="text" class="input input-bordered w-full" id="prenom" th:field="*{prenom}" required/>
+                        <span class="text-error text-xs" th:if="${#fields.hasErrors('prenom')}" th:errors="*{prenom}"></span>
                     </div>
-
                     <div>
-                        <label class="label" for="dateNaissance"><span
-                                class="label-text">Date de naissance</span></label>
-                        <input type="date" id="dateNaissance" class="input input-bordered w-full"
-                               th:field="*{dateNaissance}" required/>
-                        <span class="text-error text-xs" th:if="${#fields.hasErrors('dateNaissance')}"
-                              th:errors="*{dateNaissance}"></span>
+                        <label class="label" for="dateNaissance"><span class="label-text">Date de naissance</span></label>
+                        <input type="date" id="dateNaissance" class="input input-bordered w-full" th:field="*{dateNaissance}" required/>
+                        <span class="text-error text-xs" th:if="${#fields.hasErrors('dateNaissance')}" th:errors="*{dateNaissance}"></span>
                     </div>
-
                     <div>
-                        <label class="label " for="score"><span class="label-text">Score</span></label>
-                        <input type="number" min="0" id="score" max="100" class="input input-bordered w-full"
-                               th:field="*{score}"/>
+                        <label class="label" for="score"><span class="label-text">Score</span></label>
+                        <input type="number" min="0" id="score" max="100" class="input input-bordered w-full" th:field="*{score}"/>
                     </div>
-
                     <div class="flex flex-col gap-1">
                         <fieldset class="fieldset bg-base-100 border-base-300 rounded-box border p-4">
                             <legend class="fieldset-legend">Statut du Patient</legend>
@@ -220,8 +448,7 @@
                                 <span class="label-text">Est malade ?</span>
                             </label>
                         </fieldset>
-                        <span class="text-error text-xs" th:if="${#fields.hasErrors('malade')}"
-                              th:errors="*{malade}"></span>
+                        <span class="text-error text-xs" th:if="${#fields.hasErrors('malade')}" th:errors="*{malade}"></span>
                     </div>
                 </div>
 
@@ -236,8 +463,5 @@
     </dialog>
 
 </div>
-
 </body>
-
-
 </html>

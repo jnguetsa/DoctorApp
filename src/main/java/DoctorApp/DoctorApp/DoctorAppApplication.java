@@ -22,7 +22,7 @@ public class DoctorAppApplication {
 		SpringApplication.run(DoctorAppApplication.class, args);
 	}
 
-	//@Bean
+	@Bean
 	CommandLineRunner start(PatientRepository patientRepository) {
 		return args -> {
 			Stream.of(
